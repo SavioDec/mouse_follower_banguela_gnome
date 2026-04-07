@@ -1,3 +1,9 @@
+/**
+ * Banguela Mouse Follower
+ * Copyright (c) 2026 Sávio Mariguela Decaro
+ * Licensed under the MIT License (see LICENSE file for details)
+ */
+
 import Clutter from 'gi://Clutter';
 import Graphene from 'gi://Graphene';
 import GLib from 'gi://GLib';
