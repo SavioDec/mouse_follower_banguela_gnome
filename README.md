@@ -68,3 +68,5 @@ O esquema de dados é persistido via banco de dados nativo do GNOME (`gschema.xm
 * `walk-speed`: Escalar de velocidade para caminhada.
 * `fly-speed`: Escalar de velocidade para voo.
 * `pet-size`: Dimensão do ator em pixels (lado do quadrado).
+
+
