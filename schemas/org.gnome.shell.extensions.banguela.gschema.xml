@@ -6,7 +6,7 @@
       <summary>Velocidade de Caminhada</summary>
     </key>
     <key name="fly-speed" type="d">
-      <default>40.0</default>
+      <default>35.0</default>
       <summary>Velocidade de Voo</summary>
     </key>
     <key name="pet-size" type="i">
