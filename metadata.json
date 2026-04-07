@@ -1,0 +1,7 @@
+{
+  "uuid": "banguela@saviodecaro.dev",
+  "name": "Banguela Mouse Follower",
+  "description": "Um pet de desktop nativo renderizado via Clutter/GJS.",
+  "shell-version": [ "45", "46", "47", "48", "49" ],
+  "url": "https://saviodecaro.dev"
+}
