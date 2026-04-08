@@ -2,11 +2,11 @@
 <schemalist>
   <schema id="org.gnome.shell.extensions.banguela" path="/org/gnome/shell/extensions/banguela/">
     <key name="walk-speed" type="d">
-      <default>15.0</default>
+      <default>1.5</default>
       <summary>Velocidade de Caminhada</summary>
     </key>
     <key name="fly-speed" type="d">
-      <default>35.0</default>
+      <default>3.5</default>
       <summary>Velocidade de Voo</summary>
     </key>
     <key name="pet-size" type="i">

@@ -28,7 +28,7 @@ export default class BanguelaPreferences extends ExtensionPreferences {
         // Seletor de Velocidade de Caminhada
         const walkRow = new Adw.SpinRow({
             title: 'Velocidade de Caminhada',
-            adjustment: new Gtk.Adjustment({ lower: 0.5, upper: 100.0, step_increment: 0.1 }),
+            adjustment: new Gtk.Adjustment({ lower: 0.5, upper: 100.0, step_increment: 0.5 }),
             digits: 1
         });
         group.add(walkRow);
@@ -37,7 +37,7 @@ export default class BanguelaPreferences extends ExtensionPreferences {
         // Seletor de Velocidade de Voo
         const flyRow = new Adw.SpinRow({
             title: 'Velocidade de Voo',
-            adjustment: new Gtk.Adjustment({ lower: 1.0, upper: 100.0, step_increment: 0.5 }),
+            adjustment: new Gtk.Adjustment({ lower: 1.0, upper: 100.0, step_increment: 1.0 }),
             digits: 1
         });
         group.add(flyRow);
