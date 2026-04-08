@@ -18,7 +18,7 @@ export default class BanguelaPreferences extends ExtensionPreferences {
         // Seletor de Tamanho
         const sizeRow = new Adw.SpinRow({
             title: 'Tamanho do Pet (pixels)',
-            adjustment: new Gtk.Adjustment({ lower: 32, upper: 256, step_increment: 8 }),
+            adjustment: new Gtk.Adjustment({ lower: 14, upper: 200, step_increment: 2 }),
             digits: 0
         });
         group.add(sizeRow);
