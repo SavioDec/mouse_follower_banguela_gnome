@@ -45,7 +45,7 @@ export default class BanguelaExtension extends Extension {
     this._gicons = {};
 
     this.ANIMATION_DATA = {
-      sitting: { prefix: "SENTADO", fps: 1, frameCount: 1 },
+      sitting: { prefix: "SENTADINHO", fps: 5, frameCount: 30 },
       getting_up: { prefix: "LEVANTANDO", fps: 24, frameCount: 13 },
       walking: { prefix: "BANGUELA", fps: 15, frameCount: 21 },
       flying: { prefix: "VOANDO", fps: 13, frameCount: 6 },
