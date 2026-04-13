@@ -45,7 +45,7 @@ export default class BanguelaExtension extends Extension {
     this._gicons = {};
 
     this.ANIMATION_DATA = {
-      sitting: { prefix: "SENTADINHO", fps: 5, frameCount: 30 },
+      sitting: { prefix: "SENTADINHO", fps: 7, frameCount: 33 },
       getting_up: { prefix: "LEVANTANDO", fps: 24, frameCount: 13 },
       walking: { prefix: "BANGUELA", fps: 15, frameCount: 21 },
       flying: { prefix: "VOANDO", fps: 13, frameCount: 6 },
@@ -282,9 +282,7 @@ export default class BanguelaExtension extends Extension {
             this._currentPos.y += (dy / distance) * step;
           }
 
-          // CORREÇÃO: Hysteresis (Zona Morta) para evitar ricochete direcional em altas velocidades.
-          // Só inverte o eixo X se a distância horizontal (dx) for maior que 10 pixels.
-          // Caso contrário, mantém a última direção, prevenindo a tremedeira na escala.
+          
           if (Math.abs(dx) > 10) {
             const currentDirX = dx < 0 ? 1 : -1;
             this._lastScaleX = currentDirX;
