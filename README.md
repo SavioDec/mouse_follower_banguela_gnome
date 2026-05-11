@@ -1,4 +1,4 @@
-# 🐉 Banguela Mouse Follower
+# Banguela Mouse Follower
 
 **Banguela Mouse Follower** é uma extensão nativa para o ecossistema **GNOME Shell (45 a 50)**, desenvolvida para atuar como um "desktop pet" que interage dinamicamente com o ponteiro do mouse. O projeto utiliza uma arquitetura baseada em eventos, processamento cinemático em tempo real e uma Máquina de Estados Finitos (FSM) para orquestrar comportamentos complexos.
 
@@ -43,11 +43,11 @@ O sistema monitora a distância entre o cursor e o pet para gerenciar a oclusão
 
 ## 4. Componentes Principais
 
-### 🛠️ `extension.js`
+###  `extension.js`
 * **Detecção de Fullscreen**: Suspende o processamento e oculta o ator quando aplicações em tela cheia são detectadas, otimizando o consumo de recursos.
 * **Renderização de Frames**: Utiliza mutação de propriedade `gicon` sobre um único ator `St.Icon`. Essa abordagem minimiza o *layout thrashing* e otimiza o uso de VRAM.
 
-### ⚙️ `prefs.js`
+###  `prefs.js`
 * **Stack Tecnológica**: Baseada em **Libadwaita** e **GTK4**.
 * **Sincronização**: Utiliza `settings.bind` para persistência em tempo real das configurações de velocidade, tamanho e transparência.
 
