@@ -1,53 +1,55 @@
 # 🐉 Banguela Mouse Follower
 
-**Banguela Mouse Follower** é uma extensão nativa para o ecossistema **GNOME Shell (45+)**, desenvolvida para atuar como um "desktop pet" que interage dinamicamente com o ponteiro do mouse. O projeto foi concebido sob a perspectiva de sistemas de tempo real, utilizando uma arquitetura baseada em eventos e controle de estado.
+**Banguela Mouse Follower** é uma extensão nativa para o ecossistema **GNOME Shell (45 a 50)**, desenvolvida para atuar como um "desktop pet" que interage dinamicamente com o ponteiro do mouse. O projeto utiliza uma arquitetura baseada em eventos, processamento cinemático em tempo real e uma Máquina de Estados Finitos (FSM) para orquestrar comportamentos complexos.
 
 ---
 
 ## 1. Visão Geral do Sistema
-A extensão integra-se diretamente ao compositor **Mutter** via **GJS (GNOME JavaScript)**. A renderização é processada através do toolkit **St (Shell Toolkit)**, aproveitando o hardware gráfico via **Clutter** para garantir transformações espaciais fluidas sem sobrecarregar a CPU.
+A extensão integra-se diretamente ao compositor **Mutter** via **GJS (GNOME JavaScript)**. A renderização é processada através do toolkit **St (Shell Toolkit)**, aproveitando o hardware gráfico via **Clutter** para garantir transformações espaciais fluidas (escala, rotação e opacidade) sem sobrecarregar a CPU.
 
 ## 2. Arquitetura de Software
 
 ### A. Máquina de Estados Finita (FSM)
 O comportamento do agente é modelado por uma FSM, garantindo transições de estado previsíveis e síncronas com as animações:
 
-* **`sitting`**: Estado de repouso (IDLE).
+* **`sitting`**: Estado de repouso (IDLE). Entra em modo de economia de energia/transparência após 3 segundos de inatividade.
 * **`getting_up`**: Transição bloqueante de animação para início de movimento.
 * **`walking`**: Deslocamento vetorial de baixa velocidade para distâncias curtas.
 * **`flying`**: Deslocamento vetorial de alta velocidade, ativo para grandes deltas de distância.
 * **`sitting_down`**: Transição bloqueante de retorno ao repouso.
 
 ### B. Ciclo de Vida (Lifecycle)
-O sistema implementa rigorosamente o protocolo da classe `Extension`:
-1.  **`enable()`**: Alocação de memória para o ator, carregamento de `GSettings`, pré-cache de `GIcons` na VRAM e inicialização do loop de alta prioridade via `GLib.timeout_add`.
-2.  **`disable()`**: Desalocação manual (Garbage Collection de baixo nível) de atores Clutter e desconexão de sinais de hardware para prevenir *memory leaks*.
+O sistema implementa o protocolo da classe `Extension`:
+1.  **`enable()`**: Alocação do ator, carregamento de `GSettings`, pré-cache de `GIcons` e inicialização do loop de alta prioridade (~60 FPS) via `GLib.timeout_add`.
+2.  **`disable()`**: Desalocação manual de atores Clutter, desconexão de sinais e limpeza de cache para prevenir *memory leaks*.
 
 ---
 
-## 3. Lógica de Movimentação e Física
-A movimentação utiliza **Cálculo Vetorial** para determinar a trajetória ideal. A cada ciclo de ~16ms, o sistema calcula a distância Euclidiana ($d$) entre a posição atual ($P_{curr}$) e o alvo ($P_{target}$):
+## 3. Dinâmica de Movimento e Efeitos Visuais
 
-$$d = \sqrt{(x_{target} - x_{curr})^2 + (y_{target} - y_{curr})^2}$$
+### Cinemática e Rotação
+A movimentação utiliza cálculos vetoriais para determinar a trajetória ideal. Além da translação, o sistema aplica:
+* **Flipping Horizontal**: Inversão do eixo X baseada na direção do movimento.
+* **Inclinação Dinâmica (Pitch)**: Rotação suave no eixo Z (entre -35° e 35°) calculada via `atan2`, simulando a inclinação do voo/caminhada.
+* **Interpolação (LERP)**: As transições de ângulo e posição são suavizadas para evitar "jittering" visual.
 
-Se $d > 0.5$ px, o novo posicionamento é calculado normalizando o vetor de direção e aplicando a escalar de velocidade ($s$):
-
-$$x_{next} = x_{curr} + \left(\frac{dx}{d}\right) \cdot s$$
-$$y_{next} = y_{curr} + \left(\frac{dy}{d}\right) \cdot s$$
-
-> **Nota de Implementação:** As velocidades são normalizadas por um fator de **0.16** para compensar a frequência de atualização do loop e manter a consistência visual em monitores com diferentes taxas de atualização (Hz).
+### Opacidade Inteligente (Hover & Idle)
+O sistema monitora a distância entre o cursor e o pet para gerenciar a oclusão da interface:
+* **Detecção de Proximidade**: O pet torna-se translúcido automaticamente quando o mouse está sobre ele, garantindo que não obstrua elementos clicáveis.
+* **Auto-Hide Idle**: Se o pet permanecer no estado `sitting` por mais de 3 segundos, ele suaviza sua opacidade para reduzir a distração visual.
+* **Configuração**: A opacidade alvo é totalmente customizável via preferências.
 
 ---
 
 ## 4. Componentes Principais
 
 ### 🛠️ `extension.js`
-* **Detecção de Fullscreen**: Utiliza o sinal `in-fullscreen-changed`. O sistema suspende o processamento da FSM (*early return*) quando aplicações em tela cheia (jogos ou vídeos) são detectadas, otimizando o consumo de energia.
-* **Renderização de Frames**: Implementa mutação de propriedade `gicon` sobre um único ator `St.Icon`. Essa abordagem evita o *layout thrashing* e minimiza o consumo de VRAM.
+* **Detecção de Fullscreen**: Suspende o processamento e oculta o ator quando aplicações em tela cheia são detectadas, otimizando o consumo de recursos.
+* **Renderização de Frames**: Utiliza mutação de propriedade `gicon` sobre um único ator `St.Icon`. Essa abordagem minimiza o *layout thrashing* e otimiza o uso de VRAM.
 
 ### ⚙️ `prefs.js`
 * **Stack Tecnológica**: Baseada em **Libadwaita** e **GTK4**.
-* **Data Binding**: Sincronização em tempo real entre a interface de preferências e o motor da extensão via `settings.bind`, permitindo ajustes dinâmicos de tamanho e performance.
+* **Sincronização**: Utiliza `settings.bind` para persistência em tempo real das configurações de velocidade, tamanho e transparência.
 
 ---
 
@@ -55,16 +57,17 @@ $$y_{next} = y_{curr} + \left(\frac{dy}{d}\right) \cdot s$$
 
 | Estado | FPS | Frame Count | Comportamento |
 | :--- | :---: | :---: | :--- |
-| **Sitting** | 1 | 1 | Estático (Consumo zero) |
-| **Getting Up** | 24 | 13 | Transição Bloqueante |
-| **Walking** | 15 | 39 | Loop Cíclico |
-| **Flying** | 20 | 7 | Loop Cíclico |
-| **Sitting Down** | 24 | 8 | Transição Bloqueante |
+| **Sitting** | 7 | 33 | Loop de respiração / Repouso |
+| **Getting Up** | 24 | 13 | Transição Bloqueante (Início) |
+| **Walking** | 15 | 21 | Loop de caminhada cíclica |
+| **Flying** | 13 | 6 | Loop de voo cíclico |
+| **Sitting Down** | 24 | 8 | Transição Bloqueante (Fim) |
 
 ---
 
 ## 6. Configuração e GSettings
-O esquema de dados é persistido via banco de dados nativo do GNOME (`gschema.xml`):
-* `walk-speed`: Escalar de velocidade para caminhada.
-* `fly-speed`: Escalar de velocidade para voo.
-* `pet-size`: Dimensão do ator em pixels (lado do quadrado).
+O esquema de dados (`gschema.xml`) permite o ajuste fino da experiência:
+* `walk-speed`: Multiplicador de velocidade para caminhada.
+* `fly-speed`: Multiplicador de velocidade para voo.
+* `pet-size`: Escala do personagem em pixels.
+* `hover-opacity`: Nível de transparência (0.0 a 1.0) para estados de hover/idle.
