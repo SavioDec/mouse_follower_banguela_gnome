@@ -213,7 +213,8 @@ export default class BanguelaExtension extends Extension {
   }
 
   _updateFrame() {
-    if (this._isHiddenByFullscreen || !this._actor) return;
+    // Retorne GLib.SOURCE_CONTINUE para manter o loop rodando, caso contrário o timeout morre
+    if (this._isHiddenByFullscreen || !this._actor) return GLib.SOURCE_CONTINUE;
 
     const [x, y] = global.get_pointer();
     const timestamp = GLib.get_monotonic_time() / 1000000;
@@ -282,7 +283,6 @@ export default class BanguelaExtension extends Extension {
             this._currentPos.y += (dy / distance) * step;
           }
 
-          
           if (Math.abs(dx) > 10) {
             const currentDirX = dx < 0 ? 1 : -1;
             this._lastScaleX = currentDirX;
@@ -332,6 +332,19 @@ export default class BanguelaExtension extends Extension {
       if (this._actor.gicon !== icons[idx]) this._actor.gicon = icons[idx];
     }
 
+    // --- HITBOX E TRANSLUCIDEZ (HOVER) ---
+    // Raio de detecção é metade do tamanho do pet.
+    const hoverRadius = this.CONFIG.PET_SIZE / 2;
+    const isHovering = distance < hoverRadius;
+    
+    // Define a opacidade: 255 é sólido, 100 é translúcido (~40%), 0 é invisível
+    const targetOpacity = isHovering ? 100 : 255;
+    
+    // Evita chamadas desnecessárias à GPU
+    if (this._actor.opacity !== targetOpacity) {
+        this._actor.opacity = targetOpacity;
+    }
+
     const offset = this.CONFIG.PET_SIZE / 2;
 
     this._actor.set_position(
@@ -341,5 +354,7 @@ export default class BanguelaExtension extends Extension {
 
     this._actor.scale_x = this._lastScaleX;
     this._actor.rotation_angle_z = this._lastAngle;
+
+    return GLib.SOURCE_CONTINUE;
   }
 }
