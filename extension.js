@@ -344,16 +344,31 @@ export default class BanguelaExtension extends Extension {
     const hoverRadius = this.CONFIG.PET_SIZE / 2;
     const isHovering = distance < hoverRadius;
     
-    // Busca a opacidade configurada e define estado visual
-    const targetOpacity = isHovering ? this.CONFIG.HOVER_OPACITY : 255;
-    
-    // Evita chamadas desnecessárias à GPU
+    let targetOpacity = 255;
+
+    if (isHovering) {
+        targetOpacity = this.CONFIG.HOVER_OPACITY;
+    } else if (this._currentState === "sitting") {
+        const timeSitting = timestamp - this._stateStartTime;
+        if (timeSitting > 3.0) {
+            // Agora usa a mesma opacidade configurada nas preferências
+            targetOpacity = this.CONFIG.HOVER_OPACITY; 
+        }
+    }
+
+    // Aplica o Easing de 400ms apenas se a opacidade precisar mudar
     if (this._actor.opacity !== targetOpacity) {
+        this._actor.set_easing_duration(400); 
+        this._actor.set_easing_mode(Clutter.AnimationMode.EASE_OUT_QUAD);
         this._actor.opacity = targetOpacity;
     }
 
+    // Reseta o easing para ZERO imediatamente.
+    this._actor.set_easing_duration(0);
+
     const offset = this.CONFIG.PET_SIZE / 2;
 
+    // Atualização de propriedades instantâneas
     this._actor.set_position(
       Math.floor(this._currentPos.x - offset),
       Math.floor(this._currentPos.y - offset),
