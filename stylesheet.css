@@ -4,5 +4,5 @@ img {
 }
 
 img:hover {
-  opacity: 0.7; /* Becomes 70% transparent on hover */
+  opacity: 0.8; /* Becomes 70% transparent on hover */
 }

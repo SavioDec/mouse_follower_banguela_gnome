@@ -13,5 +13,10 @@
       <default>48</default>
       <summary>Tamanho do Personagem</summary>
     </key>
+    
+    <key name="hover-opacity" type="d">
+      <default>0.4</default>
+      <summary>Opacidade ao passar o mouse (0.0 a 1.0)</summary>
+    </key>
   </schema>
 </schemalist>

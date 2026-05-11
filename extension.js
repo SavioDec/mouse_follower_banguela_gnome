@@ -70,6 +70,13 @@ export default class BanguelaExtension extends Extension {
         const size = this._s.get_int("pet-size");
         return size > 0 ? size : 48;
       },
+      get HOVER_OPACITY() {
+        // Converte escala 0.0-1.0 do GSettings para a escala absoluta 0-255 do Clutter
+        let opacity = this._s.get_double("hover-opacity");
+        if (opacity < 0.0) opacity = 0.0;
+        if (opacity > 1.0) opacity = 1.0;
+        return Math.floor(opacity * 255);
+      },
       _s: this._settings,
     };
 
@@ -337,8 +344,8 @@ export default class BanguelaExtension extends Extension {
     const hoverRadius = this.CONFIG.PET_SIZE / 2;
     const isHovering = distance < hoverRadius;
     
-    // Define a opacidade: 255 é sólido, 100 é translúcido (~40%), 0 é invisível
-    const targetOpacity = isHovering ? 100 : 255;
+    // Busca a opacidade configurada e define estado visual
+    const targetOpacity = isHovering ? this.CONFIG.HOVER_OPACITY : 255;
     
     // Evita chamadas desnecessárias à GPU
     if (this._actor.opacity !== targetOpacity) {

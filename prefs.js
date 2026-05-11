@@ -43,6 +43,16 @@ export default class BanguelaPreferences extends ExtensionPreferences {
         group.add(flyRow);
         settings.bind('fly-speed', flyRow, 'value', Gio.SettingsBindFlags.DEFAULT);
 
+        const opacityRow = new Adw.SpinRow({
+            title: 'Opacidade ao sobrepor o mouse',
+            subtitle: '1.0 = Sólido, 0.0 = Invisível',
+            adjustment: new Gtk.Adjustment({ lower: 0.0, upper: 1.0, step_increment: 0.1 }),
+            digits: 2
+        });
+        group.add(opacityRow);
+        settings.bind('hover-opacity', opacityRow, 'value', Gio.SettingsBindFlags.DEFAULT);
+
         window.add(page);
     }
+    
 }
