@@ -9,6 +9,15 @@
       <default>3.5</default>
       <summary>Velocidade de Voo</summary>
     </key>
+    <key name="fly-dynamic-speed" type="b">
+      <default>true</default>
+      <summary>Voo com aceleração dinâmica (velocidade proporcional à distância)</summary>
+    </key>
+    <key name="fly-full-speed-distance" type="i">
+      <range min="300" max="3000"/>
+      <default>900</default>
+      <summary>Distância (px) em que o voo atinge a velocidade máxima</summary>
+    </key>
     <key name="pet-size" type="i">
       <default>48</default>
       <summary>Tamanho do Personagem</summary>
